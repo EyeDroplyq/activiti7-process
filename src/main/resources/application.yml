@@ -1,0 +1,38 @@
+server:
+  port: 9090
+  servlet:
+    context-path: /workflow
+    session:
+      cookie:
+        # 认证后会响应 set-cookie: JSESSIONID=xxx;path=/workflow 请求头
+        # 即保存路径默认为 /workflow，而前端cookie保存在根据路径 / ，
+        # 要保证前后端path一致，所以要指定 path=/ ,
+        # 前端才能找到响应的JSESSIONID，从而找到session
+        path: /
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/activiti7-service?nullCatalogMeansCurrent=true&useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=GMT%2B8&allowMultiQueries=true
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: 123456
+  activiti:
+    db-history-used: true
+    history-level: full
+    check-process-definitions: false
+    mail-server-host: stmp.qq.com
+    mail-server-port: 465
+    mail-server-use-ssl: true
+    mail-server-default-from: 1525761478@qq.com
+    mail-server-user-name: 迷倒小美
+    mail-server-password: ohmrnsjmqsgjhjia
+    deployment-mode: never-fail
+    database-schema-update: true
+logging:
+  level:
+    org.activiti.engine.impl.persistence.entity: debug
+  # 注意：写⾃⼰的 mapper 所在完整包名
+#    com.qfedu.workflow.mapper: debug
+mybatis-flex:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.lyq.activiti7Service.entity
+
