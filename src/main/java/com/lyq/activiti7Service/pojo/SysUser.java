@@ -10,6 +10,7 @@ import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Set;
 
@@ -22,7 +23,7 @@ import java.util.Set;
 @Data
 @ApiModel("用户实体")
 @Table("sys_user")
-public class SysUser implements UserDetails {
+public class SysUser implements UserDetails, Serializable {
     @Id(keyType = KeyType.Generator)
     private String id;
     @ApiModelProperty("用户名")

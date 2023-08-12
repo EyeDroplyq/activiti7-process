@@ -10,6 +10,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -21,7 +22,7 @@ import java.util.Date;
 @Data
 @ApiModel("流程定义-业务关联实体类")
 @Table("tb_process_config")
-public class ProcessBusiness {
+public class ProcessBusiness implements Serializable {
     @ApiModelProperty("主键id")
     @Id(keyType = KeyType.Generator,value = KeyGenerators.snowFlakeId)
     private String id;

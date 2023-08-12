@@ -2,6 +2,9 @@ package com.lyq.activiti7Service.service;
 
 import com.lyq.activiti7Service.pojo.dto.ProcessDefDTO;
 import com.lyq.activiti7Service.utils.Result;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * @description:
@@ -31,4 +34,19 @@ public interface ProcessDefService {
      * @return
      */
     Result deleteProcessDefByDeploymentId(String deploymentId,String key);
+
+    /**
+     * 到处流程定义的xml和png文件
+     * @param type:xml 或 png
+     * @param definitionId:流程定义id
+     * @return null
+     */
+    void export(String type, String definitionId,HttpServletResponse response);
+
+    /**
+     * 通过上传文件来部署流程
+     * @param file:上传的文件
+     * @return Result
+     */
+    Result fileDeploy(MultipartFile file);
 }

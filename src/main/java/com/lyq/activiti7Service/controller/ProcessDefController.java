@@ -7,9 +7,12 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.regexp.RE;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * @description:
@@ -50,6 +53,22 @@ public class ProcessDefController {
             } else {
                 return Result.error("删除失败，失败原因为:" + msg);
             }
+        }
+    }
+
+    @ApiOperation("获取流程图文件")
+    @GetMapping("export/{type}/{definitionId}")
+    public void export(@PathVariable("type") String type, @PathVariable("definitionId") String definitionId, HttpServletResponse response) {
+        processDefService.export(type, definitionId, response);
+    }
+
+    @ApiOperation("上传.zip,.bpmn,.bpmn20.xml文件来进行部署")
+    @PostMapping("/file/deploy")
+    public Result fileDeploy(@RequestParam("file") MultipartFile file) {
+        try {
+            return processDefService.fileDeploy(file);
+        } catch (Exception e) {
+            return Result.error(e.getMessage());
         }
     }
 }
