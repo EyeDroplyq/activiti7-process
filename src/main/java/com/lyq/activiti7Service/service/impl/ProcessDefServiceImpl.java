@@ -1,6 +1,9 @@
 package com.lyq.activiti7Service.service.impl;
 
+import com.google.common.collect.Lists;
+import com.lyq.activiti7Service.pojo.ProcessBusiness;
 import com.lyq.activiti7Service.pojo.dto.ProcessDefDTO;
+import com.lyq.activiti7Service.service.ProcessBusinessService;
 import com.lyq.activiti7Service.service.ProcessDefService;
 import com.lyq.activiti7Service.utils.DateUtils;
 import com.lyq.activiti7Service.utils.Result;
@@ -11,6 +14,7 @@ import org.activiti.engine.repository.ProcessDefinitionQuery;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.*;
 
 /**
@@ -22,7 +26,8 @@ import java.util.*;
 @Service
 @Slf4j
 public class ProcessDefServiceImpl extends ActivitiBaseService implements ProcessDefService {
-    
+    @Resource
+    private ProcessBusinessService processBusinessService;
     @Override
     public Result list(ProcessDefDTO processDefDTO) {
         ProcessDefinitionQuery query = repositoryService.createProcessDefinitionQuery();
@@ -35,6 +40,8 @@ public class ProcessDefServiceImpl extends ActivitiBaseService implements Proces
             query.processDefinitionKey(processDefKey);
         }
         List<ProcessDefinition> processDefList = query.latestVersion().listPage(processDefDTO.getCurrent() - 1, processDefDTO.getSize());
+        Result processBusinessResult = processBusinessService.getProcessBusinessByKey(processDefKey);
+        ProcessBusiness processBusiness = (ProcessBusiness) processBusinessResult.getData();
         //最终返回给前端的结果
         Map<String,Object> result=new HashMap<>();
         long total = query.count();
@@ -49,6 +56,8 @@ public class ProcessDefServiceImpl extends ActivitiBaseService implements Proces
             record.put("xmlName",processDefinition.getResourceName());
             record.put("pngName",processDefinition.getDiagramResourceName());
             record.put("version",processDefinition.getVersion());
+            record.put("businessRoute",processBusiness.getBusinessRoute());
+            record.put("formName",processBusiness.getFormName());
             String deploymentId = processDefinition.getDeploymentId();
             Deployment deployment = repositoryService.createDeploymentQuery().deploymentId(deploymentId).singleResult();
             Date deploymentTime = deployment.getDeploymentTime();
@@ -57,5 +66,31 @@ public class ProcessDefServiceImpl extends ActivitiBaseService implements Proces
         }
         result.put("records",records);
         return Result.ok(result);
+    }
+
+    @Override
+    public Result suspendOrActivitiModel(String definitionId) {
+        ProcessDefinition processDefinition = repositoryService.createProcessDefinitionQuery().processDefinitionId(definitionId).singleResult();
+        if(processDefinition==null){
+            return Result.error("流程定义不存在");
+        }
+        if (processDefinition.isSuspended()){
+            //如果流程挂起了，就激活
+            repositoryService.activateProcessDefinitionById(definitionId);
+        }else{
+            //如果激活了就挂起
+            repositoryService.suspendProcessDefinitionById(definitionId);
+        }
+        return Result.ok();
+    }
+
+    @Override
+    public Result deleteProcessDefByDeploymentId(String deploymentId,String key) {
+       repositoryService.deleteDeployment(deploymentId);
+        List<ProcessDefinition> processDefList = repositoryService.createProcessDefinitionQuery().processDefinitionKey(key).list();
+        if (processDefList.isEmpty()){
+            processBusinessService.deleteProcessBusinessByKey(key);
+        }
+        return Result.ok();
     }
 }

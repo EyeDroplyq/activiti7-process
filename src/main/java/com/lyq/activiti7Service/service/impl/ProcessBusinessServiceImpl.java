@@ -33,4 +33,10 @@ public class ProcessBusinessServiceImpl implements ProcessBusinessService {
         int row = processBusinessMapper.insertOrUpdate(processBusiness);
         return row;
     }
+
+    @Override
+    public void deleteProcessBusinessByKey(String key) {
+        QueryWrapper query=QueryWrapper.create().select(PROCESS_BUSINESS.PROCESS_KEY).from(PROCESS_BUSINESS).where(PROCESS_BUSINESS.PROCESS_KEY.eq(key));
+        processBusinessMapper.deleteByQuery(query);
+    }
 }

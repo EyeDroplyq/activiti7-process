@@ -22,4 +22,10 @@ public interface ProcessBusinessService {
      * @param processBusiness 流程定义-业务关联实体类
      */
     int updateOrSaveProcessBusiness(ProcessBusiness processBusiness);
+
+    /**
+     * 通过流程key删除流程-业务关系表中的数据
+     * @param key:流程key
+     */
+    void deleteProcessBusinessByKey(String key);
 }

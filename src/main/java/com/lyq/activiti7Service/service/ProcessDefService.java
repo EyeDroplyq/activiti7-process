@@ -16,4 +16,19 @@ public interface ProcessDefService {
      * @return Result.ok(data)
      */
     Result list(ProcessDefDTO processDefDTO);
+
+    /**
+     * 根据流程定义id 激活或者挂起流程实例
+     * @param definitionId 流程定义id
+     * @return
+     */
+    Result suspendOrActivitiModel(String definitionId);
+
+    /**
+     * 通过流程部署id来删除流程定义
+     * @param deploymentId：流程部署id
+     * @param key：流程定义的key
+     * @return
+     */
+    Result deleteProcessDefByDeploymentId(String deploymentId,String key);
 }
